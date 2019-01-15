@@ -10,7 +10,9 @@
 </head>
 
 <body>
-    <ul id="messages"></ul>
+    <div>
+        <textarea id="messages" class="messages" readlonly></textarea>
+    </div>
     <form id="chat" action="">
         <input id="name" class="name" type="text">
         <input id="message" class="message" type="text">
@@ -19,15 +21,19 @@
     <script src="/socket.io/socket.io.js"></script>
     <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
     <script>
-        $(() => {
-            const socket = io();
-            $('#chat').submit(() => {
-                socket.emit('chat message', $('#message').val());
-                $('message').val('');
-            });
-            socket.on('chat message', (msg) => {
-                $('#messages').append($('<li>').text(msg));
-            });
+        const socket = io();
+        $('#chat').submit(() => {
+            socket.emit('send message', $('#name').val(), $('#message').val());
+            $('#name').val('');
+            $('#message').val('');
+            return false;
+        });
+        socket.on('receive message', (user_json) => {
+            let name = user_json.name;
+            let msg = user_json.msg;
+            // document.write(name + ': ' + msg)
+            $('#messages').append(name + ': ' + msg + "\n");
+            $('#messages').scrollTop($('#messages').innerHeight())
         });
     </script>
 </body>

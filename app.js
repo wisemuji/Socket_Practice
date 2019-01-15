@@ -27,19 +27,20 @@ io.on('connection', (socket) => { // 소켓 접속
     socket.on('leave room', (room) => { // 이벤트 명, 룸 코드(룸 나가기)
         socket.leave(room) // 룸 나가기
     })
-    socket.on('send message', (name, profileImg, index, room) => { // 프론트에서 서버에게 메세지를 보낼 때
-        let user_json = { // 데이터 json으로 정리
+    socket.on('send message', (name, msg, room) => { // 프론트에서 서버에게 메세지를 보낼 때
+            let user_json = { // 데이터 json으로 정리
                 name: name,
-                profileImg: profileImg,
-                index: index
+                msg: msg
             }
+            io.emit('receive message', user_json);
             // io.to(room).emit('receive message', user_json); // 프론트에서 서버에게 메세지를 보낼 때
-        socket.broadcast.to(room).emit('receive message', user_json)
-    })
-    socket.on('chat message', (msg) => {
-        io.emit('chat message', msg);
-        console.log('msg=' + msg);
-    })
+            // socket.broadcast.to(room).emit('receive message', user_json)
+            console.log(user_json)
+        })
+        // socket.on('chat message', (msg) => {
+        //     io.emit('chat message', msg);
+        //     console.log('msg=' + msg);
+        // })
     socket.on('disconnect', () => { // 연결이 끊겼을 때
         console.log('user disconnect')
     })
